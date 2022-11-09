@@ -3,7 +3,8 @@ package main
 import (
 	"bluebell/dao/mysql"
 	"bluebell/dao/redis"
-	"bluebell/logger"
+	"bluebell/pkg/logger"
+	"bluebell/pkg/snowflake"
 	"bluebell/router"
 	"bluebell/setting"
 	"context"
@@ -15,6 +16,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
@@ -27,24 +29,28 @@ func main() {
 	// return
 	// 2.配置logger
 	if err := logger.Init(setting.Conf.LogConfig); err != nil {
-		log.Println("Init  Setting fail err: ", err)
+		log.Println("Init logger Setting fail err: ", err)
 		return
 	}
 	defer zap.L().Sync() // flushing any buffered log  entries.
 	zap.L().Info("logger init success")
 	// 3.配置mysql
 	if err := mysql.Init(setting.Conf.MySQLConfig); err != nil {
-		log.Println("Init  Setting fail err: ", err)
+		log.Println("Init mysql Setting fail err: ", err)
 		return
 	}
 	defer mysql.Close()
 	//4.配置redis
 	if err := redis.Init(setting.Conf.RedisConfig); err != nil {
-		log.Println("Init  Setting fail err: ", err)
+		log.Println("Init reids Setting fail err: ", err)
 		return
 	}
 	defer redis.Close()
+	if err := snowflake.Init(setting.Conf.StartTime, int64(setting.Conf.MachineId)); err != nil {
+		zap.L().Debug(fmt.Sprint("Init snowflake fail err: ", err.Error()))
+	}
 	//5.设置路由
+	gin.SetMode(setting.Conf.Mode)
 	e, err := router.SetUp()
 	if err != nil {
 		log.Println("Init  router fail err: ", err)
@@ -54,6 +60,7 @@ func main() {
 		Addr:    fmt.Sprintf(":%d", setting.Conf.Port),
 		Handler: e,
 	}
+
 	// 6. 启动运行
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

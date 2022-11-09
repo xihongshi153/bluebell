@@ -22,8 +22,8 @@ func Init(cfg *setting.LogConfig) (err error) {
 	var l = new(zapcore.Level)
 	err = l.UnmarshalText([]byte(cfg.Level))
 	core := zapcore.NewCore(encoder, writeSyncer, l)
-	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1)) // AddCaller 添加调用信息
-	// 替换zap中全局logger 调用方式 zap.L().Debug("")
+	logger := zap.New(core, zap.AddCaller()) // AddCaller 添加调用信息
+	// 替换zap中全局logger sugarlogger 调用方式 zap.L().Debug("")
 	zap.ReplaceGlobals(logger)
 	return nil
 }
@@ -37,10 +37,10 @@ func getEncoder() zapcore.Encoder {
 func getLogWriter(fileName string, maxSize, maxBackups, maxAge int) zapcore.WriteSyncer {
 	// 添加日志切分的功能
 	lumberJackLogger := &lumberjack.Logger{
-		Filename:   "./test.log",
-		MaxSize:    1,
-		MaxBackups: 5,
-		MaxAge:     30,
+		Filename:   fileName,
+		MaxSize:    maxSize,
+		MaxBackups: maxBackups,
+		MaxAge:     maxAge,
 		Compress:   false,
 	}
 	return zapcore.AddSync(lumberJackLogger)

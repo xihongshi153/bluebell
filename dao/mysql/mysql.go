@@ -4,12 +4,13 @@ import (
 	"bluebell/setting"
 	"database/sql"
 	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB
 
 func Init(cfg *setting.MySQLConfig) (err error) {
-	//dsn := "root:root@tcp(127.0.0.1:3306)/blubell"
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True",
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DbName,
 	)

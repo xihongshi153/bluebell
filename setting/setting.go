@@ -9,9 +9,11 @@ import (
 var Conf = new(AppConfig)
 
 type AppConfig struct {
-	Name string `mapstructure:"name"`
-	Mode string `mapstructure:"mode"`
-	Port int    `mapstructure:"port"`
+	Name      string `mapstructure:"name"`
+	Mode      string `mapstructure:"mode"`
+	Port      int    `mapstructure:"port"`
+	MachineId int    `mapstructure:"machine_id"`
+	StartTime string `mapstructure:"start_time"`
 
 	*LogConfig   `mapstructure:"log"`
 	*MySQLConfig `mapstructure:"mysql"`
@@ -45,7 +47,7 @@ type RedisConfig struct {
 
 func Init() (err error) {
 	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
+	//viper.SetConfigType("yaml") //指定配置文件的类型 (装用于从远程获取配置信息时指定文件类型)
 	viper.AddConfigPath("./setting")
 	err = viper.ReadInConfig()
 	if err != nil {
