@@ -48,6 +48,7 @@ const (
 	CodeServerBusy
 	CodeTokenEmpty   // Auth为空
 	CodeTokenInvalid // Auth不合法
+	CodeServerError
 )
 
 var ResCodeToErrString = map[ResCode]string{
@@ -59,6 +60,7 @@ var ResCodeToErrString = map[ResCode]string{
 	CodeServerBusy:      "服务器忙碌",
 	CodeTokenEmpty:      "Auth为空",
 	CodeTokenInvalid:    "Auth不合法",
+	CodeServerError:     "服务器内部错误",
 }
 
 func codeToString(code ResCode) string {

@@ -51,6 +51,7 @@ func main() {
 	}
 	//5.设置路由
 	gin.SetMode(setting.Conf.Mode)
+
 	e, err := router.SetUp()
 	if err != nil {
 		log.Println("Init  router fail err: ", err)

@@ -1,4 +1,4 @@
-package ctroller
+package controller
 
 import (
 	"bluebell/dao/models"

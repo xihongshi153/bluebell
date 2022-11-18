@@ -1,8 +1,8 @@
 package mysql
 
 import (
+	"bluebell/dao/models"
 	"bluebell/pkg/snowflake"
-	"fmt"
 
 	"go.uber.org/zap"
 )
@@ -10,9 +10,7 @@ import (
 func InsertUser(userid int64, username, password, email string) (err error) {
 	sqlStr := "insert into user(user_id,username,password,email) values (?,?,?,?)"
 	_, err = db.Exec(sqlStr, snowflake.GenID(), username, password, email)
-	fmt.Println(err)
 	if err != nil {
-		zap.L().Debug(fmt.Sprint("dao user.go Register insert fail err: ", err.Error()))
 		return
 	}
 	return
@@ -23,6 +21,15 @@ func FindUserWithUserNamePassword(username, password string) (cnt int, err error
 	err = row.Scan(&cnt)
 	if err != nil {
 		zap.L().Info("FindUserWithUserNamePassword fail err: ", zap.Error(err))
+	}
+	return
+}
+func SelectUserInfoById(id int) (u models.User, err error) {
+	sqlStr := "select username,email,gender from user where user_id = ?"
+	row := db.QueryRow(sqlStr, id)
+	err = row.Scan(&u.UserName, &u.Email, &u.Gender)
+	if err != nil {
+		zap.L().Info("userDao.go SelectUserInfoById fail err: ", zap.Error(err))
 	}
 	return
 }
