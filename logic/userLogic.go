@@ -2,6 +2,7 @@ package logic
 
 import (
 	"bluebell/dao/mysql"
+	"bluebell/pkg/jwt"
 	"bluebell/pkg/snowflake"
 	"errors"
 )
@@ -11,16 +12,18 @@ func Register(username string, password string, email string) (err error) {
 	err = mysql.InsertUser(snowflake.GenID(), username, password, email)
 	return
 }
-func Login(username, password string) (bool, error) {
+func Login(username, password string) (bool, string, error) {
 	cnt, err := mysql.FindUserWithUserNamePassword(username, password)
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 	if cnt == 0 {
-		return false, errors.New("can not find user")
+		return false, "", errors.New("can not find user")
 	}
 	if cnt == 1 {
-		return true, nil
+		// 签发 token
+		token, _ := jwt.GenerateJwt(username)
+		return true, token, nil
 	}
-	return false, errors.New(" user repeat, two or more same username and same password")
+	return false, "", errors.New(" user repeat, two or more same username and same password")
 }

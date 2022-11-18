@@ -3,6 +3,7 @@ package ctroller
 import (
 	"bluebell/dao/models"
 	"bluebell/logic"
+	"bluebell/pkg/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,16 +37,15 @@ func LoginHandler(ctx *gin.Context) {
 		})
 		zap.L().Error("unexpected param ", zap.String("err", err.Error()))
 	}
-	success, err := logic.Login(loginParam.UserName, loginParam.Password)
+	success, token, err := logic.Login(loginParam.UserName, loginParam.Password)
 	if err != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"err": err.Error(),
 		})
 		return
 	}
-
 	if success {
-		ctx.JSON(http.StatusOK, "success login ")
+		response.ResponseJSON(ctx, response.CodeSuccess, map[string]any{"token": token})
 	} else {
 		ctx.JSON(500, gin.H{
 			"err": "something wrong,please contact with Administrator,err is nil but fail login",
