@@ -30,6 +30,8 @@ func SetUp() (e *gin.Engine, err error) {
 		v1.POST("/createpost", controller.CreatePostHandler)
 		// 查看某一个帖子
 		v1.GET("/post/:pid", controller.GetPostDetailByPIdHandler)
+		// 投票
+		v1.GET("/post/:pid")
 	}
 	// 分页展示帖子
 	e.GET("/postpage", controller.GetPostPageHandler)

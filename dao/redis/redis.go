@@ -10,6 +10,12 @@ import (
 
 var rdb *redis.Client
 
+var (
+	PostPrefix   = "post:"
+	VoteUserSet  = "vote:userVote"    //  value值为 post_id+"_"+user_id
+	VotePostZSet = "vote:postVoteNum" //  value值为  post_id  对应分数为 点赞数
+)
+
 func Init(cfg *setting.RedisConfig) (err error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
