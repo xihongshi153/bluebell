@@ -33,3 +33,9 @@ func SelectUserInfoById(id int) (u models.User, err error) {
 	}
 	return
 }
+func SelectUserIdByUserName(username string) (id int, err error) {
+	sqlStr := "select user_id from user where username = ? ;"
+	row := db.QueryRow(sqlStr, username)
+	err = row.Scan(&id)
+	return
+}

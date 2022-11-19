@@ -31,3 +31,7 @@ func Init(cfg *setting.MySQLConfig) (err error) {
 func Close() {
 	_ = db.Close()
 }
+func GetTx() (tx *sql.Tx, err error) {
+	tx, err = db.Begin()
+	return
+}

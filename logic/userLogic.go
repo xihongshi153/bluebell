@@ -5,6 +5,7 @@ import (
 	"bluebell/pkg/jwt"
 	"bluebell/pkg/snowflake"
 	"errors"
+	"fmt"
 )
 
 func Register(username string, password string, email string) (err error) {
@@ -22,7 +23,11 @@ func Login(username, password string) (bool, string, error) {
 	}
 	if cnt == 1 {
 		// 签发 token
-		token, _ := jwt.GenerateJwt(username)
+		userId, err := mysql.SelectUserIdByUserName(username)
+		if err != nil {
+			return false, "", errors.New("can not find user_id by this username:" + username)
+		}
+		token, _ := jwt.GenerateJwt(username, fmt.Sprintf("%d", userId))
 		return true, token, nil
 	}
 	return false, "", errors.New(" user repeat, two or more same username and same password")

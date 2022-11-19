@@ -15,6 +15,7 @@ var LoginExpireTime = time.Hour //超时时间
 // 自定义加密结构体
 type loginClaims struct {
 	Username string `json:"username"`
+	UserId   string `json:"userid"`
 	jwt.RegisteredClaims
 }
 
@@ -41,9 +42,10 @@ type loginClaims struct {
 // 	ID string `json:"jti,omitempty"`
 // }
 
-func GenerateJwt(raw string) (string, error) {
+func GenerateJwt(username, userid string) (string, error) {
 	claims := loginClaims{
-		raw,
+		username,
+		userid,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(LoginExpireTime)),
 			Issuer:    "tomato-admin", // 签发人
@@ -81,6 +83,7 @@ func JwtAuthMiddleware() func(c *gin.Context) {
 			return
 		}
 		c.Set("username", mc.Username)
+		c.Set("userid", mc.UserId)
 		c.Next()
 	}
 }

@@ -21,7 +21,7 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 	// 2.loggic
-	err := logic.Register(registerParam.UserName, registerParam.Passwrod, registerParam.Email)
+	err := logic.Register(registerParam.UserName, registerParam.Password, registerParam.Email)
 	// 3.返回值
 	if err != nil {
 		c.JSON(http.StatusOK, err)
